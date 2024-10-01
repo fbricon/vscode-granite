@@ -8,7 +8,7 @@ import { ProgressData } from "../../src/commons/progressData";
 
 function App() {
   const modelOptions: ModelOption[] = [
-    { label: 'granite-code:3b', value: 'granite-code:3b', info: '2.0 GB' },
+    { label: 'granite-code:3b', value: 'granite-code:3b', info: '2 GB' },
     { label: 'granite-code:8b', value: 'granite-code:8b', info: '4.6 GB' },
     { label: 'granite-code:20b', value: 'granite-code:20b', info: '12 GB' },
     { label: 'granite-code:34b', value: 'granite-code:34b', info: '19 GB' }
@@ -19,6 +19,7 @@ function App() {
   const [tabModel, setTabModel] = useState<string | null>(modelOptions[0].value);
   const [chatModel, setChatModel] = useState<string | null>(modelOptions[2].value);
   const [embeddingsModel, setEmbeddingsModel] = useState<string | null>(embeddingsOptions[0].value);
+  const [systemInfo, setSystemInfo] = useState<any>(null);
 
   const [modelPullProgress, setModelPullProgress] = useState<{
     [key: string]: ProgressData | undefined
@@ -85,13 +86,13 @@ function App() {
       case 'init': {
         const data = payload.data;
         setInstallationModes(data.installModes);
+        setSystemInfo(data.systemInfo);
         break;
       }
       case 'status': {
         const data = payload.data; // The JSON data our extension sent
         setStatus(data.ollamaInstalled ? "installed" : "Not installed");
         setAvailableModels(data.models);
-
         break;
       }
       case 'pull-progress': {
@@ -145,7 +146,10 @@ function App() {
   return (
     <main>
       <h1>Setup IBM Granite Code as your code assistant with Continue</h1>
-
+      <div className="form-group">
+        <label>System Info:</label>
+        <pre>{JSON.stringify(systemInfo, null, 2)}</pre>
+      </div>
       <div className="form-group">
         {status === 'installed' ? <FcCheckmark /> : <FcCancel />}
         <label>Ollama status:</label>
